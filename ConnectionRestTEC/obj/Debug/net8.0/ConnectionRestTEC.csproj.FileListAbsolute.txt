@@ -31,3 +31,4 @@ C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\obj\Debug\net8.
 C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\obj\Debug\net8.0\ConnectionRestTEC.pdb
 C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\obj\Debug\net8.0\ConnectionRestTEC.genruntimeconfig.cache
 C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\obj\Debug\net8.0\ref\ConnectionRestTEC.dll
+C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\obj\Debug\net8.0\ConnectionRestTEC.sourcelink.json
