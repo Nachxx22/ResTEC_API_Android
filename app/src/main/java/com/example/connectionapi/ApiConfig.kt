@@ -10,8 +10,8 @@ object ApiConfig {
 
     val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .addConverterFactory(ScalarsConverterFactory.create()) //para texto plano
-        // .addConverterFactory(GsonConverterFactory.create()) //JSON
+        //.addConverterFactory(ScalarsConverterFactory.create()) //para texto plano
+         .addConverterFactory(GsonConverterFactory.create()) //JSON
         .build()
 
     val apiService: ApiService = retrofit.create(ApiService::class.java)

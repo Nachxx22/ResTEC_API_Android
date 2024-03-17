@@ -1,5 +1,4 @@
 package com.example.connectionapi
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,14 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.connectionapi.ui.theme.ConnectionAPITheme
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import androidx.compose.runtime.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,16 +32,28 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Llama al API y maneja la respuesta
-                    CallApi(ApiConfig.apiService.getMensaje())
-
+                    CallApi(ApiConfig.apiService.getPlatillos())
                 }
             }
         }
     }
 }
 
+// Define una clase de datos para representar la estructura del JSON
+data class Platillo(
+    val nombre: String,
+    val precio: Double,
+    val tipo: String,
+    val tiempoEstimado: String,
+    val descripcion: String,
+    val calorias: Int
+)
+data class PlatillosResponse(
+    val platillos: List<Platillo>
+)
+
 @Composable
-fun CallApi(call: Call<String>) {
+fun CallApi(call: Call<List<Platillo>>) { // Cambia el tipo del parámetro a Call<List<Platillo>>
     var mensaje by remember { mutableStateOf("Cargando...") }
 
     LaunchedEffect(Unit) {
@@ -54,7 +62,13 @@ fun CallApi(call: Call<String>) {
                 call.execute()
             }
             if (response.isSuccessful) {
-                mensaje = response.body() ?: "Empty response"
+                val platillos = response.body()
+                if (platillos != null && platillos.isNotEmpty()) {
+                    val primerPlatillo = platillos[0] // Aquí solo tomamos el primer platillo para el ejemplo
+                    mensaje = "Nombre: ${primerPlatillo.nombre}, Precio: ${primerPlatillo.precio}, Tipo: ${primerPlatillo.tipo}, Descripción: ${primerPlatillo.descripcion}, Calorías: ${primerPlatillo.calorias}"
+                } else {
+                    mensaje = "Lista de platillos vacía"
+                }
             } else {
                 mensaje = "Error1: ${response.message()}"
             }
@@ -74,7 +88,8 @@ fun CallApi(call: Call<String>) {
 @Composable
 fun DefaultPreview() {
     ConnectionAPITheme {
-        CallApi(ApiConfig.apiService.getMensaje())
+        CallApi(ApiConfig.apiService.getPlatillos())
     }
 }
+
 
