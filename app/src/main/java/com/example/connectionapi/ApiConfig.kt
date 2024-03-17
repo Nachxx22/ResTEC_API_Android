@@ -6,7 +6,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 object ApiConfig {
     //"http://localhost:5276/"
-    private const val BASE_URL = "http://192.168.18.11:5276/"
+    private const val BASE_URL = "http://192.168.18.11:5276/" //URL de la API para la PC en la misma red, usar ipconfig en CMD y utilizar el IPv4
 
     val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
