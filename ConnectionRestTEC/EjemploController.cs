@@ -32,7 +32,18 @@ namespace ConnectionRestTEC
                     TiempoEstimado = TimeSpan.FromMinutes(30),
                     Descripcion = "Este es el platillo 2",
                     Calorias = 500
+                },
+                new Platillo
+                {
+                    Nombre = "Platillo 3",
+                    Precio = 19.99m,
+                    Tipo = "Plato Principal",
+                    TiempoEstimado = TimeSpan.FromMinutes(30),
+                    Descripcion = "Este es el platillo 3",
+                    Calorias = 700
                 }
+                
+                
             };
 
             // Devolver la lista de platillos como JSON
