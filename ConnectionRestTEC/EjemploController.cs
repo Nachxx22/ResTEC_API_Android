@@ -42,13 +42,28 @@ namespace ConnectionRestTEC
                     Descripcion = "Este es el platillo 3",
                     Calorias = 700
                 }
-                
-                
             };
 
             // Devolver la lista de platillos como JSON
+         
             return Ok(platillos);
         }
+        [HttpPost]
+        [Route("enviarPlatillos")]
+        public ActionResult EnviarPlatillos([FromBody] List<string> platillosNombres)
+        {
+            // Aquí puedes manejar los nombres de los platillos recibidos y guardarlos en una lista
+            // Ejemplo de cómo imprimir los nombres recibidos en la consola
+            foreach (var nombre in platillosNombres)
+            {
+                System.Console.WriteLine(nombre);
+            }
+            
+            // Devolver una respuesta de éxito
+            return Ok();
+        }
+    }
+        
     }
 
     public class Platillo
@@ -60,6 +75,5 @@ namespace ConnectionRestTEC
         public string Descripcion { get; set; }
         public int Calorias { get; set; }
     }
-}
 
 
