@@ -2,6 +2,7 @@ package com.example.connectionapi
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,25 +24,11 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import com.google.android.material.snackbar.Snackbar
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ConnectionAPITheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    // Llama al API y maneja la respuesta
-                    CallApi(ApiConfig.apiService.getPlatillos())
-                }
-            }
-        }
-    }
-}
 data class Platillo(
     val nombre: String,
     val precio: Double,
@@ -54,12 +41,52 @@ data class PlatillosResponse(
     val platillos: List<Platillo>
 )
 
+object CarritoPlatillos {
+    private val myList = mutableListOf<Platillo>()
+
+    fun addToList(item: Platillo) {
+        myList.add(item)
+    }
+
+    fun removeFromList(item: Platillo) {
+        myList.remove(item)
+    }
+
+    fun getList(): List<Platillo> {
+        return myList.toList()
+    }
+}
+
+
+
+class MainActivity : ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            // Lista mutable para almacenar las tarjetas seleccionadas
+            val selectedPlatillos = remember { mutableStateListOf<Platillo>() }
+
+            ConnectionAPITheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    // Llama al API y maneja la respuesta, pasando la lista de tarjetas seleccionadas
+                    CallApi(ApiConfig.apiService.getPlatillos(), selectedPlatillos)
+                }
+            }
+        }
+    }
+}
+
+
 //Función para llamar al API y manejar la respuesta
 
 
 
 @Composable
-fun CallApi(call: Call<List<Platillo>>) {
+fun CallApi(call: Call<List<Platillo>>, selectedPlatillos : MutableList<Platillo>) {
     var platillos by remember { mutableStateOf(emptyList<Platillo>()) }
 
     val context = LocalContext.current
@@ -81,7 +108,8 @@ fun CallApi(call: Call<List<Platillo>>) {
         }
     }
 
-    PlatillosList(platillos)
+    // Llama a PlatillosList pasando la lista mutable de tarjetas seleccionadas
+    PlatillosList(platillos = platillos, selectedPlatillos = selectedPlatillos)
 }
 
 //Para mostrar el error del API
@@ -95,29 +123,60 @@ private fun showSnackbar(context: Context, message: String) {
 
 
 @Composable
-fun PlatillosList(platillos: List<Platillo>) {
+fun PlatillosList(platillos: List<Platillo>, selectedPlatillos: MutableList<Platillo>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
+        Log.d("ApiGet", "Platillos Recibidos: $platillos")
         items(platillos) { platillo ->
-            PlatilloCard(platillo)
+            val isSelected = platillo in selectedPlatillos
+            PlatilloCard(
+                platillo = platillo,
+                isSelected = isSelected,
+                onPlatilloClicked = {
+                    if (isSelected) {
+                        selectedPlatillos.remove(platillo)
+                        CarritoPlatillos.removeFromList(platillo)
+                    } else {
+                        selectedPlatillos.add(platillo)
+                        CarritoPlatillos.addToList(platillo)
+                    }
+                }
+            )
         }
     }
 }
 
+
+fun onPlatilloClicked2(platilloNombre: String) {
+    // Aquí puedes realizar cualquier acción que desees con el nombre del platillo
+    // Por ejemplo, puedes guardarlo en una variable o realizar una llamada a otra función
+    Log.d("MiApp", "Platillo clickeado: $platilloNombre")
+    println("Platillo clickeado: $platilloNombre")
+}
+
 //Las tarjetas que muestran la información de los platillos
 @Composable
-fun PlatilloCard(platillo: Platillo) {
+fun PlatilloCard(platillo: Platillo, isSelected: Boolean, onPlatilloClicked: (Platillo) -> Unit) {
+    val selectedColor = Color.DarkGray
+    val defaultColor = Color.White
+
+    val backgroundColor = if (isSelected) selectedColor else defaultColor
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { /* Acción al clicar la tarjeta */ }
+            .clickable {
+                onPlatilloClicked(platillo)
+                onPlatilloClicked2(platillo.nombre)
+            },
+        color = backgroundColor
     ) {
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
-            Text(text = platillo.nombre)
+            Text(text = platillo.nombre, fontWeight = FontWeight.Bold)
             Text(text = "Precio: ${platillo.precio}")
             Text(text = "Tipo: ${platillo.tipo}")
             Text(text = "Descripción: ${platillo.descripcion}")
@@ -125,6 +184,9 @@ fun PlatilloCard(platillo: Platillo) {
         }
     }
 }
+
+
+
 
 
 @Preview(showBackground = true)
@@ -135,7 +197,7 @@ fun DefaultPreview() {
             Platillo("Platillo 1", 10.99, "Entrada", "20 minutos", "Descripción del platillo 1", 300),
             Platillo("Platillo 2", 15.99, "Plato Principal", "30 minutos", "Descripción del platillo 2", 500)
         )
-        PlatillosList(platillos)
+        //PlatillosList(platillos = platillos, selectedPlatillo = selectedPlatillo)
     }
 }
 
