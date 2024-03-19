@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import retrofit2.Callback
 import retrofit2.Response
 
