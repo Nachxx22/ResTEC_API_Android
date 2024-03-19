@@ -49,17 +49,17 @@ namespace ConnectionRestTEC
             return Ok(platillos);
         }
         [HttpPost]
-        [Route("enviarPlatillos")]
-        public ActionResult EnviarPlatillos([FromBody] List<string> platillosNombres)
+        [Route("platillos")]
+        public IActionResult ReceivePlatillos([FromBody] List<Platillo> platillos)
         {
-            // Aquí puedes manejar los nombres de los platillos recibidos y guardarlos en una lista
-            // Ejemplo de cómo imprimir los nombres recibidos en la consola
-            foreach (var nombre in platillosNombres)
+            // Aquí maneja los platillos recibidos en formato JSON
+            // Puedes guardarlos en una lista o base de datos
+            // Por ahora, solo imprimir el JSON recibido
+            Console.WriteLine("Platillos recibidos:");
+            foreach (var platillo in platillos)
             {
-                System.Console.WriteLine(nombre);
+                Console.WriteLine(platillo.Nombre);
             }
-            
-            // Devolver una respuesta de éxito
             return Ok();
         }
     }
