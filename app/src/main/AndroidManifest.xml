@@ -15,9 +15,7 @@
         android:theme="@style/Theme.ConnectionAPI"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".CarritoActivity"
-            android:exported="false" />
+
 
         <meta-data
             android:name="com.google.android.actions"
@@ -26,7 +24,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.ConnectionAPI">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

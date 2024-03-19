@@ -9,6 +9,6 @@ interface ApiService {
     @GET("api/ejemplo2")
     fun getPlatillos(): Call<List<Platillo>>
 
-    @POST("api/enviarPlatillos")
-    fun enviarPlatillos(@Body platillosNombres: List<String>): Call<Void>
+    @POST("api/platillos") // Ruta para enviar los platillos al backend
+    fun sendPlatillos(@Body platillos: List<Platillo>): Call<Void>
 }

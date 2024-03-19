@@ -2,7 +2,6 @@ package com.example.connectionapi
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 object ApiConfig {
     //"http://localhost:5276/"
@@ -11,7 +10,7 @@ object ApiConfig {
     val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         //.addConverterFactory(ScalarsConverterFactory.create()) //para texto plano
-         .addConverterFactory(GsonConverterFactory.create()) //JSON
+        .addConverterFactory(GsonConverterFactory.create()) //JSON
         .build()
 
     val apiService: ApiService = retrofit.create(ApiService::class.java)

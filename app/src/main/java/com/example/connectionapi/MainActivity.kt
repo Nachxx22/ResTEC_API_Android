@@ -6,12 +6,13 @@ import android.util.Log
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -28,6 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import retrofit2.Callback
+import retrofit2.Response
 
 data class Platillo(
     val nombre: String,
@@ -37,9 +41,7 @@ data class Platillo(
     val descripcion: String,
     val calorias: Int
 )
-data class PlatillosResponse(
-    val platillos: List<Platillo>
-)
+
 
 object CarritoPlatillos {
     private val myList = mutableListOf<Platillo>()
@@ -52,9 +54,7 @@ object CarritoPlatillos {
         myList.remove(item)
     }
 
-    fun getList(): List<Platillo> {
-        return myList.toList()
-    }
+
 }
 
 
@@ -66,24 +66,85 @@ class MainActivity : ComponentActivity() {
         setContent {
             // Lista mutable para almacenar las tarjetas seleccionadas
             val selectedPlatillos = remember { mutableStateListOf<Platillo>() }
-
+            // Usamos un estado booleano para controlar si el diálogo debe mostrarse
+            var showDialog by remember { mutableStateOf(false) }
             ConnectionAPITheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Llama al API y maneja la respuesta, pasando la lista de tarjetas seleccionadas
-                    CallApi(ApiConfig.apiService.getPlatillos(), selectedPlatillos)
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        // Botón para mostrar los platillos en el carrito
+                        Button(
+                            onClick = {
+                                showDialog = true
+                            }
+                        ) {
+                            Text(text = "Ver Carrito")
+                        }
+
+                        // Botón para enviar los platillos al servidor backend
+                        Button(
+                            onClick = {
+                                // Envía los platillos al servidor
+                                sendPlatillosToServer(selectedPlatillos)
+                            }
+                        ) {
+                            Text(text = "Enviar al Servidor") }
+                                // Llama al API y maneja la respuesta, pasando la lista de tarjetas seleccionadas
+                                CallApi(ApiConfig.apiService.getPlatillos(), selectedPlatillos)
+                        // Muestra el diálogo si showDialog es true
+                        if (showDialog) {
+                            ShowPlatillosInCartDialog(selectedPlatillos)
+                            showDialog = false
+                        }
+                            }
+                        }
+                    }
                 }
             }
-        }
+    @Composable
+    private fun ShowPlatillosInCartDialog(selectedPlatillos: List<Platillo>) {
+        val context = LocalContext.current
+        val dialog = AlertDialog.Builder(context)
+            .setTitle("Platillos en el Carrito")
+            .setMessage(selectedPlatillos.joinToString("\n") { it.nombre })
+            .setPositiveButton("Cerrar") { _, _ -> }
+            .create()
+        dialog.show()
     }
+        }
+
+
+
+
+
+
+private fun sendPlatillosToServer(selectedPlatillos: List<Platillo>) {
+    // Puedes usar Gson para convertir la lista de platillos a JSON
+    val gson = Gson()
+    //val platillosJson = gson.toJson(selectedPlatillos)
+
+    // Llama al método sendPlatillos de ApiService para enviar los platillos al servidor
+    ApiConfig.apiService.sendPlatillos(selectedPlatillos).enqueue(object : Callback<Void> {
+        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+            if (response.isSuccessful) {
+                Log.d("API", "Platillos enviados correctamente")
+            } else {
+                Log.e("API", "Error al enviar los platillos: ${response.code()}")
+            }
+        }
+
+        override fun onFailure(call: Call<Void>, t: Throwable) {
+            Log.e("API", "Error al enviar los platillos: ${t.message}")
+        }
+    })
 }
 
-
 //Función para llamar al API y manejar la respuesta
-
-
 
 @Composable
 fun CallApi(call: Call<List<Platillo>>, selectedPlatillos : MutableList<Platillo>) {
@@ -119,6 +180,7 @@ private fun showSnackbar(context: Context, message: String) {
         Snackbar.make(it, message, Snackbar.LENGTH_LONG).show()
     }
 }
+
 
 
 
@@ -193,11 +255,13 @@ fun PlatilloCard(platillo: Platillo, isSelected: Boolean, onPlatilloClicked: (Pl
 @Composable
 fun DefaultPreview() {
     ConnectionAPITheme {
-        val platillos = listOf(
+        /*val platillos = listOf(
             Platillo("Platillo 1", 10.99, "Entrada", "20 minutos", "Descripción del platillo 1", 300),
             Platillo("Platillo 2", 15.99, "Plato Principal", "30 minutos", "Descripción del platillo 2", 500)
         )
-        //PlatillosList(platillos = platillos, selectedPlatillo = selectedPlatillo)
+
+        PlatillosList(platillos = platillos, selectedPlatillo = selectedPlatillo)
+         */
     }
 }
 
