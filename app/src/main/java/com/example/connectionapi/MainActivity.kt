@@ -125,7 +125,7 @@ class MainActivity : ComponentActivity() {
 
 private fun sendPlatillosToServer(selectedPlatillos: List<Platillo>) {
     // Puedes usar Gson para convertir la lista de platillos a JSON
-    val gson = Gson()
+    //val gson = Gson()
     //val platillosJson = gson.toJson(selectedPlatillos)
 
     // Llama al método sendPlatillos de ApiService para enviar los platillos al servidor
