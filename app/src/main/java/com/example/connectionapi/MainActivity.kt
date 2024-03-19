@@ -105,6 +105,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+    //Función para que el carrito se muestre como ventana emergente con los platillos seleccionados
     @Composable
     private fun ShowPlatillosInCartDialog(selectedPlatillos: List<Platillo>) {
         val context = LocalContext.current
@@ -121,7 +122,7 @@ class MainActivity : ComponentActivity() {
 
 
 
-
+//Función para enviar los platillos al servidor en forma JSON
 private fun sendPlatillosToServer(selectedPlatillos: List<Platillo>) {
     // Puedes usar Gson para convertir la lista de platillos a JSON
     //val gson = Gson()
@@ -182,7 +183,7 @@ private fun showSnackbar(context: Context, message: String) {
 
 
 
-
+//Función para guardar/eliminar los platillos seleccionados en el carrito, además del isSelected para cambiar el color de la tarjeta
 @Composable
 fun PlatillosList(platillos: List<Platillo>, selectedPlatillos: MutableList<Platillo>) {
     LazyColumn(
@@ -208,7 +209,7 @@ fun PlatillosList(platillos: List<Platillo>, selectedPlatillos: MutableList<Plat
     }
 }
 
-
+//función simple para mostrar el nombre del platillo clickeado
 fun onPlatilloClicked2(platilloNombre: String) {
     // Aquí puedes realizar cualquier acción que desees con el nombre del platillo
     // Por ejemplo, puedes guardarlo en una variable o realizar una llamada a otra función
@@ -216,7 +217,7 @@ fun onPlatilloClicked2(platilloNombre: String) {
     println("Platillo clickeado: $platilloNombre")
 }
 
-//Las tarjetas que muestran la información de los platillos
+//Función para mostrar la tarjeta de cada platillon y puedan ser clickeados
 @Composable
 fun PlatilloCard(platillo: Platillo, isSelected: Boolean, onPlatilloClicked: (Platillo) -> Unit) {
     val selectedColor = Color.DarkGray
