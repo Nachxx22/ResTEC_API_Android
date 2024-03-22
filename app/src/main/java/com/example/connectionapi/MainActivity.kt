@@ -29,6 +29,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import retrofit2.Callback
 import retrofit2.Response
 
@@ -40,6 +42,14 @@ data class Platillo(
     val descripcion: String,
     val calorias: Int
 )
+data class Pedido(
+    var IDPedido: String,
+    var Platillos: List<String>,
+    var Feedback: String,
+    var Status: String
+)
+
+
 
 
 object CarritoPlatillos {
@@ -58,53 +68,90 @@ object CarritoPlatillos {
 
 
 
-class MainActivity : ComponentActivity() {
+@Composable
+fun PlatillosComposable(selectedPlatillos: MutableList<Platillo>, apiMutex: Mutex) {
+        // Llamar a CallApi dentro del cuerpo de una función @Composable
+        CallApi(call = ApiConfig.apiService.getPlatillos(), selectedPlatillos = selectedPlatillos, mutex = apiMutex)
+}
 
+@Composable
+fun MainActivityContent() {
+    // Lista mutable para almacenar las tarjetas seleccionadas
+    val selectedPlatillos = remember { mutableStateListOf<Platillo>() }
+    // Mutex para sincronizar el acceso a la API
+    val apiMutex = remember { Mutex() }
+
+    // Usamos un estado booleano para controlar si el diálogo debe mostrarse
+    var showDialog by remember { mutableStateOf(false) }
+    var pedidosDialog by remember { mutableStateOf(false) }
+
+    ConnectionAPITheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Top
+            ) {
+                // Botón para mostrar los platillos en el carrito
+                Button(
+                    onClick = {
+                        showDialog = true
+                    }
+                ) {
+                    Text(text = "Ver Carrito")
+                }
+
+                // Botón para enviar los platillos al servidor
+                Button(
+                    onClick = {
+                        // Envía los platillos al servidor
+                        sendPlatillosToServer(selectedPlatillos)
+                    }
+                ) {
+                    Text(text = "Enviar al Servidor")
+                }
+
+                // Botón para mostrar los pedidos
+                Button(
+                    onClick = {
+                        //Pide los pedidos al servidor
+                        pedidosDialog= true
+                    }
+                ) {
+                    Text(text = "Pedidos")
+                }
+
+                // Llama al composable PlatillosComposable, pasando la lista de tarjetas seleccionadas y el Mutex
+                PlatillosComposable(selectedPlatillos = selectedPlatillos, apiMutex = apiMutex)
+
+                // Muestra el diálogo si showDialog es true
+                if (showDialog) {
+                    ShowPlatillosInCartDialog(selectedPlatillos)
+                    showDialog = false
+                }
+
+                if(pedidosDialog){
+                    Log.d("API pedidos", "Pidiendo Pedidos al backend")
+                    // Llama a la función ApiPedidos para pedir los pedidos al servidor
+                    ApiPedidos(call = ApiConfig.apiService.getPedidos(), mutex = apiMutex)
+                    pedidosDialog= false
+                }
+            }
+        }
+    }
+}
+
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Lista mutable para almacenar las tarjetas seleccionadas
-            val selectedPlatillos = remember { mutableStateListOf<Platillo>() }
-            // Usamos un estado booleano para controlar si el diálogo debe mostrarse
-            var showDialog by remember { mutableStateOf(false) }
-            ConnectionAPITheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        // Botón para mostrar los platillos en el carrito
-                        Button(
-                            onClick = {
-                                showDialog = true
-                            }
-                        ) {
-                            Text(text = "Ver Carrito")
-                        }
+            MainActivityContent()
+        }
+    }
+}
 
-                        // Botón para enviar los platillos al servidor backend
-                        Button(
-                            onClick = {
-                                // Envía los platillos al servidor
-                                sendPlatillosToServer(selectedPlatillos)
-                            }
-                        ) {
-                            Text(text = "Enviar al Servidor") }
-                                // Llama al API y maneja la respuesta, pasando la lista de tarjetas seleccionadas
-                                CallApi(ApiConfig.apiService.getPlatillos(), selectedPlatillos)
-                        // Muestra el diálogo si showDialog es true
-                        if (showDialog) {
-                            ShowPlatillosInCartDialog(selectedPlatillos)
-                            showDialog = false
-                        }
-                            }
-                        }
-                    }
-                }
-            }
     //Función para que el carrito se muestre como ventana emergente con los platillos seleccionados
     @Composable
     private fun ShowPlatillosInCartDialog(selectedPlatillos: List<Platillo>) {
@@ -116,7 +163,29 @@ class MainActivity : ComponentActivity() {
             .create()
         dialog.show()
     }
+
+@Composable
+fun ShowPedidosDialog(context: Context, pedidos: List<Pedido>) {
+    val dialog = AlertDialog.Builder(context)
+        .setTitle("Pedidos")
+        .setMessage(buildString {
+            for (pedido in pedidos) {
+                append("ID del Pedido: ${pedido.IDPedido}\n")
+                append("Platillos: ${pedido.Platillos.joinToString(", ")}\n")
+                append("Feedback: ${pedido.Feedback}\n")
+                append("Status: ${pedido.Status}\n\n")
+            }
+        })
+        .setPositiveButton("Cerrar") { _, _ -> }
+        .create()
+
+    DisposableEffect(Unit) {
+        dialog.show()
+        onDispose {
+            dialog.dismiss()
         }
+    }
+}
 
 
 
@@ -147,31 +216,64 @@ private fun sendPlatillosToServer(selectedPlatillos: List<Platillo>) {
 //Función para llamar al API y manejar la respuesta
 
 @Composable
-fun CallApi(call: Call<List<Platillo>>, selectedPlatillos : MutableList<Platillo>) {
+fun CallApi(call: Call<List<Platillo>>, selectedPlatillos: MutableList<Platillo>, mutex: Mutex) {
     var platillos by remember { mutableStateOf(emptyList<Platillo>()) }
-
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        try {
-            val response = withContext(Dispatchers.IO) {
-                call.execute()
+        mutex.withLock {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    call.execute()
+                }
+                if (response.isSuccessful) {
+                    platillos = response.body() ?: emptyList()
+                } else {
+                    // Manejar el error de la llamada
+                    showSnackbar(context, "Error en la llamada al API: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                // Manejar error de la llamada
+                showSnackbar(context, "Error en la llamada al API: ${e.message}")
             }
-            if (response.isSuccessful) {
-                platillos = response.body() ?: emptyList()
-            } else {
-                // Manejar el error de la llamada
-                showSnackbar(context, "Error en la llamada al API: ${response.message()}")
-            }
-        } catch (e: Exception) {
-            // Manejar error de la llamada
-            showSnackbar(context, "Error en la llamada al API: ${e.message}")
         }
     }
-
     // Llama a PlatillosList pasando la lista mutable de tarjetas seleccionadas
     PlatillosList(platillos = platillos, selectedPlatillos = selectedPlatillos)
 }
+
+@Composable
+fun ApiPedidos(call: Call<List<Pedido>>, mutex: Mutex) {
+    var pedidos by remember { mutableStateOf(emptyList<Pedido>()) }
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        mutex.withLock {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    call.execute()
+                }
+                if (response.isSuccessful) {
+                    pedidos = response.body() ?: emptyList()
+                } else {
+                    // Manejar el error de la llamada
+                    showSnackbar(context, "Error en la llamada al API: ${response.message()}")
+                    Log.d("pedidos error", "Pidiendo Pedidos al backend ${response.message()}")
+                }
+            } catch (e: Exception) {
+                // Manejar error de la llamada
+                showSnackbar(context, "Error en la llamada al API: ${e.message}")
+                Log.d("pedidos error3", "Pidiendo Pedidos al backend ${e.message}")
+            }
+        }
+    }
+
+    // Mostrar los pedidos en un AlertDialog
+    if (pedidos.isNotEmpty()) {
+        ShowPedidosDialog(context, pedidos)
+    }
+}
+
 
 //Para mostrar el error del API
 private fun showSnackbar(context: Context, message: String) {
