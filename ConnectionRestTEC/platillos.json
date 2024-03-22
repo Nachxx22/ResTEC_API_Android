@@ -1,0 +1,26 @@
+[
+  {
+    "Nombre": "Platillo 1",
+    "Precio": 10.99,
+    "Tipo": "Entrada",
+    "TiempoEstimado": "00:20:00",
+    "Descripcion": "Este es el platillo 1",
+    "Calorias": 300
+  },
+  {
+    "Nombre": "Platillo 2",
+    "Precio": 15.99,
+    "Tipo": "Plato Principal",
+    "TiempoEstimado": "00:30:00",
+    "Descripcion": "Este es el platillo 2",
+    "Calorias": 500
+  },
+  {
+    "Nombre": "Platillo 3",
+    "Precio": 19.99,
+    "Tipo": "Plato Principal",
+    "TiempoEstimado": "00:30:00",
+    "Descripcion": "Este es el platillo 3",
+    "Calorias": 700
+  }
+]

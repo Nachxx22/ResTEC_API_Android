@@ -32,3 +32,5 @@ C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\obj\Debug\net8.
 C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\obj\Debug\net8.0\ConnectionRestTEC.genruntimeconfig.cache
 C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\obj\Debug\net8.0\ref\ConnectionRestTEC.dll
 C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\obj\Debug\net8.0\ConnectionRestTEC.sourcelink.json
+C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\bin\Debug\net8.0\platillos.json
+C:\Users\Nacho\RiderProjects\ConnectionRestTEC\ConnectionRestTEC\bin\Debug\net8.0\pedidos.json
