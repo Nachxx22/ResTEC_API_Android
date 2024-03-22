@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ConnectionRestTEC")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+713acd3df66e4452001c9aeeb02003482c76d0eb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0eac19647f91d9ca48f3b9d95b73e6298352d40e")]
 [assembly: System.Reflection.AssemblyProductAttribute("ConnectionRestTEC")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ConnectionRestTEC")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

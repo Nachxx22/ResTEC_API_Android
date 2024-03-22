@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Nacho\\RiderProjects\\ConnectionRestTEC\\ConnectionRestTEC\\ConnectionRestTEC.csproj": {}
+    "C:\\Users\\andre\\RiderProjects\\ResTEC_API_Android\\ConnectionRestTEC\\ConnectionRestTEC.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Nacho\\RiderProjects\\ConnectionRestTEC\\ConnectionRestTEC\\ConnectionRestTEC.csproj": {
+    "C:\\Users\\andre\\RiderProjects\\ResTEC_API_Android\\ConnectionRestTEC\\ConnectionRestTEC.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Nacho\\RiderProjects\\ConnectionRestTEC\\ConnectionRestTEC\\ConnectionRestTEC.csproj",
+        "projectUniqueName": "C:\\Users\\andre\\RiderProjects\\ResTEC_API_Android\\ConnectionRestTEC\\ConnectionRestTEC.csproj",
         "projectName": "ConnectionRestTEC",
-        "projectPath": "C:\\Users\\Nacho\\RiderProjects\\ConnectionRestTEC\\ConnectionRestTEC\\ConnectionRestTEC.csproj",
-        "packagesPath": "C:\\Users\\Nacho\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Nacho\\RiderProjects\\ConnectionRestTEC\\ConnectionRestTEC\\obj\\",
+        "projectPath": "C:\\Users\\andre\\RiderProjects\\ResTEC_API_Android\\ConnectionRestTEC\\ConnectionRestTEC.csproj",
+        "packagesPath": "C:\\Users\\andre\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\andre\\RiderProjects\\ResTEC_API_Android\\ConnectionRestTEC\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Nacho\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\andre\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -66,7 +66,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
