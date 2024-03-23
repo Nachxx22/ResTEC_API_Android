@@ -43,11 +43,12 @@ data class Platillo(
     val calorias: Int
 )
 data class Pedido(
-    var IDPedido: String,
-    var Platillos: List<String>,
-    var Feedback: String,
-    var Status: String
+    val idPedido: String,
+    val platillos: List<String>,
+    val feedback: String,
+    val status: String
 )
+
 
 
 
@@ -78,6 +79,8 @@ fun PlatillosComposable(selectedPlatillos: MutableList<Platillo>, apiMutex: Mute
 fun MainActivityContent() {
     // Lista mutable para almacenar las tarjetas seleccionadas
     val selectedPlatillos = remember { mutableStateListOf<Platillo>() }
+    // Lista mutable para almacenar las tarjetas seleccionadas
+    val pedidos = remember { mutableStateListOf<Pedido>() }
     // Mutex para sincronizar el acceso a la API
     val apiMutex = remember { Mutex() }
 
@@ -110,7 +113,7 @@ fun MainActivityContent() {
                         sendPlatillosToServer(selectedPlatillos)
                     }
                 ) {
-                    Text(text = "Enviar al Servidor")
+                    Text(text = "Realizar Pedido")
                 }
 
                 // Botón para mostrar los pedidos
@@ -125,6 +128,7 @@ fun MainActivityContent() {
 
                 // Llama al composable PlatillosComposable, pasando la lista de tarjetas seleccionadas y el Mutex
                 PlatillosComposable(selectedPlatillos = selectedPlatillos, apiMutex = apiMutex)
+                ApiPedidos(call = ApiConfig.apiService.getPedidos(),pedidos2=pedidos, mutex = apiMutex)
 
                 // Muestra el diálogo si showDialog es true
                 if (showDialog) {
@@ -132,16 +136,17 @@ fun MainActivityContent() {
                     showDialog = false
                 }
 
-                if(pedidosDialog){
-                    Log.d("API pedidos", "Pidiendo Pedidos al backend")
-                    // Llama a la función ApiPedidos para pedir los pedidos al servidor
-                    ApiPedidos(call = ApiConfig.apiService.getPedidos(), mutex = apiMutex)
-                    pedidosDialog= false
-                }
+                // Llama a la función ApiPedidos para pedir los pedidos al servidor
+                    if(pedidosDialog){
+                        Log.d("API pedidos", "Pidiendo Pedidos al backend")
+                        ShowPedidosDialog(pedidos)
+                        pedidosDialog= false
+                    }
             }
         }
     }
 }
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -165,15 +170,19 @@ class MainActivity : ComponentActivity() {
     }
 
 @Composable
-fun ShowPedidosDialog(context: Context, pedidos: List<Pedido>) {
+fun ShowPedidosDialog(pedidos: List<Pedido>) {
+    val context = LocalContext.current
     val dialog = AlertDialog.Builder(context)
         .setTitle("Pedidos")
         .setMessage(buildString {
             for (pedido in pedidos) {
-                append("ID del Pedido: ${pedido.IDPedido}\n")
-                append("Platillos: ${pedido.Platillos.joinToString(", ")}\n")
-                append("Feedback: ${pedido.Feedback}\n")
-                append("Status: ${pedido.Status}\n\n")
+                append("ID del Pedido: ${pedido.idPedido}\n")
+                append("Platillos:\n")
+                for (platillo in pedido.platillos) {
+                    append("   - $platillo\n")
+                }
+                append("Feedback: ${pedido.feedback}\n")
+                append("Status: ${pedido.status}\n\n")
             }
         })
         .setPositiveButton("Cerrar") { _, _ -> }
@@ -186,6 +195,7 @@ fun ShowPedidosDialog(context: Context, pedidos: List<Pedido>) {
         }
     }
 }
+
 
 
 
@@ -243,7 +253,7 @@ fun CallApi(call: Call<List<Platillo>>, selectedPlatillos: MutableList<Platillo>
 }
 
 @Composable
-fun ApiPedidos(call: Call<List<Pedido>>, mutex: Mutex) {
+fun ApiPedidos(call: Call<List<Pedido>>, pedidos2: MutableList<Pedido>,mutex: Mutex) {
     var pedidos by remember { mutableStateOf(emptyList<Pedido>()) }
     val context = LocalContext.current
 
@@ -270,9 +280,10 @@ fun ApiPedidos(call: Call<List<Pedido>>, mutex: Mutex) {
 
     // Mostrar los pedidos en un AlertDialog
     if (pedidos.isNotEmpty()) {
-        ShowPedidosDialog(context, pedidos)
+        ShowPedidosDialog(pedidos)
     }
 }
+
 
 
 //Para mostrar el error del API
