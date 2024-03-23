@@ -7,7 +7,11 @@ namespace ConnectionRestTEC.Controllers;
 
 public class ChefController : Controller
 {  
-    //Este es el GET para la lista de pedidos activos
+    /// <summary>
+    /// Obtiene la lista de pedidos activos.
+    /// </summary>
+    /// <param> No presenta parametros</param>
+    /// <returns>Una lista de objetos Pedido_activo como resultado de la solicitud.</returns>
     [HttpGet]
     [Route("pedidos_activos")]
     // GET
@@ -63,7 +67,12 @@ public class ChefController : Controller
         return Ok(pedidos_activos);
     }
     
-    //Este es el GET para los pedidos seleccionados por el chef
+     
+    /// <summary>
+    /// Obtiene la lista de pedidos seleccionados por el chef.
+    /// </summary>
+    /// <param> No presenta parametros</param>
+    /// <returns>Una lista de objetos Pedido_activo como resultado de la solicitud.</returns>
     [HttpGet]
     [Route("pedidos_seleccionados_chef")]
     // GET
@@ -113,7 +122,11 @@ public class ChefController : Controller
         return Ok(pedidos_seleccionados_chef);
     }
     
-    //Este es el Get para los pedidos que no han sido asignados
+    /// <summary>
+    /// Obtiene la lista de pedidos que no han sido asignados
+    /// </summary>
+    /// <param> No presenta parametros</param>
+    /// <returns>Una lista de objetos Pedido_activo como resultado de la solicitud.</returns>
     [HttpGet]
     [Route("pedidos_no_asignados")]
     // GET
@@ -164,23 +177,44 @@ public class ChefController : Controller
     
     public class Pedido_activo
     {
+        // Propiedad para almacenar el identificador del pedido
         public string id { get; set; }
+
+        // Propiedad para almacenar el nombre del platillo pedido
         public string platillo { get; set; }
+
+        // Propiedad para almacenar el tiempo estimado de preparación del platillo
         public string tiempo { get; set; }
+
+        // Propiedad para almacenar si el platillo está listo o no
         public string Listo { get; set; }
     }
     public class Pedido_seleccionado_chef
     {
+        // Propiedad para almacenar el identificador del pedido
         public string id { get; set; }
+
+        // Propiedad para almacenar el nombre del platillo pedido
         public string platillo { get; set; }
+
+        // Propiedad para almacenar el tiempo estimado de preparación del platillo
         public string tiempo { get; set; }
+
+        // Propiedad para almacenar si el platillo está listo o no
         public string Listo { get; set; }
     }
     public class Pedido_no_asignado
     {
+        // Propiedad para almacenar el identificador del pedido
         public string id { get; set; }
+
+        // Propiedad para almacenar el nombre del platillo pedido
         public string platillo { get; set; }
+
+        // Propiedad para almacenar el tiempo estimado de preparación del platillo
         public string tiempo { get; set; }
+
+        // Propiedad para almacenar si el platillo está listo o no
         public string Listo { get; set; }
     }
 }
