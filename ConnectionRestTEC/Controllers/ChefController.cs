@@ -74,46 +74,40 @@ public class ChefController : Controller
         {
             new Pedido_seleccionado_chef
             {
-                id = "1",
-                platillo = "Hamburguesa clásica", 
-                tiempo = "5", 
+                id = "7",
+                platillo = "Sushi variado", 
+                tiempo = "17", 
                 Listo = "No"
             },
             new Pedido_seleccionado_chef
             {
-                id = "2",
-                platillo = "Pizza Margarita", 
-                tiempo = "7", 
+                id = "8",
+                platillo = "Pollo a la parrilla con puré de papas", 
+                tiempo = "19", 
                 Listo = "No"
             },
             new Pedido_seleccionado_chef
             {
-                id = "3",
-                platillo = "Filete de salmón a la parrilla", 
-                tiempo = "9", 
+                id = "9",
+                platillo = "Pad Thai", 
+                tiempo = "1", 
                 Listo = "No"
             },
             new Pedido_seleccionado_chef
             {
-                id = "4",
-                platillo = "Ensalada César", 
-                tiempo = "11", 
+                id = "10",
+                platillo = "Steak frites", 
+                tiempo = "8", 
                 Listo = "No"
             },
             new Pedido_seleccionado_chef
             {
-                id = "5",
-                platillo = "Pasta Alfredo", 
-                tiempo = "13", 
+                id = "11",
+                platillo = "Sotto de champiñones", 
+                tiempo = "10", 
                 Listo = "No"
             },
-            new Pedido_seleccionado_chef
-            {
-                id = "6",
-                platillo = "Tacos de carne asada", 
-                tiempo = "15", 
-                Listo = "No"
-            }
+            
         };
         // Devolver la lista de platillos como JSON
         return Ok(pedidos_seleccionados_chef);
@@ -130,46 +124,39 @@ public class ChefController : Controller
         {
             new Pedido_no_asignado
             {
-                id = "1",
-                platillo = "Hamburguesa clásica", 
-                tiempo = "5", 
+                id = "12",
+                platillo = "Tarta de manzana", 
+                tiempo = "12", 
                 Listo = "No"
             },
             new Pedido_no_asignado
             {
-                id = "2",
-                platillo = "Pizza Margarita", 
-                tiempo = "7", 
+                id = "13",
+                platillo = "Helado de vainilla con salsa de chocolate", 
+                tiempo = "14", 
                 Listo = "No"
             },
             new Pedido_no_asignado
             {
-                id = "3",
-                platillo = "Filete de salmón a la parrilla", 
-                tiempo = "9", 
+                id = "14",
+                platillo = "Fish and chips", 
+                tiempo = "16", 
                 Listo = "No"
             },
             new Pedido_no_asignado
             {
-                id = "4",
-                platillo = "Ensalada César", 
-                tiempo = "11", 
+                id = "15",
+                platillo = "Sopa de tomate y albahaca", 
+                tiempo = "18", 
                 Listo = "No"
             },
             new Pedido_no_asignado
             {
-                id = "5",
-                platillo = "Pasta Alfredo", 
-                tiempo = "13", 
+                id = "16",
+                platillo = "Paella", 
+                tiempo = "20", 
                 Listo = "No"
             },
-            new Pedido_no_asignado
-            {
-                id = "6",
-                platillo = "Tacos de carne asada", 
-                tiempo = "15", 
-                Listo = "No"
-            }
         };
         // Devolver la lista de platillos como JSON
         return Ok(pedidos_no_asignados);
