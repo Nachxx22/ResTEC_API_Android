@@ -36,6 +36,8 @@ import retrofit2.Response
 import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
+import com.example.connectionapi.databinding.ActivityMainBinding
 
 
 data class Platillo(
@@ -91,7 +93,7 @@ fun PlatillosComposable(selectedPlatillos: MutableList<Platillo>, apiMutex: Mute
 
 
 @Composable
-fun MainActivityContent() {
+fun MainActivityContenido(activity: MainActivity) {
     // Lista mutable para almacenar las tarjetas seleccionadas
     val selectedPlatillos = remember { mutableStateListOf<Platillo>() }
     // Lista mutable para almacenar las tarjetas seleccionadas
@@ -164,18 +166,46 @@ fun MainActivityContent() {
 }
 
 
+
+
 class MainActivity : ComponentActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Verificar si el usuario ya ha iniciado sesión
         if (usuarioHaIniciadoSesion()) {
-            // Si el usuario ya ha iniciado sesión, mostrar el contenido de MainActivity
-            mostrarContenidoPrincipal()
+            // Si el usuario ya ha iniciado sesión, mostrar el contenido principal
+            mostrarContenido()
         } else {
             // Si el usuario no ha iniciado sesión, iniciar MiActividad para que pueda hacerlo
             iniciarMiActividad()
         }
+    }
+
+    private fun mostrarContenido() {
+        setContent {
+            val activity = remember { this@MainActivity }
+            // Llama a MainActivityContenido si el usuario ha iniciado sesión,
+            // de lo contrario, llama a FirstContent
+            if (usuarioHaIniciadoSesion()) {
+                MainActivityContenido(activity)
+            } else {
+                FirstContent(activity)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        // Borrar el estado de inicio de sesión al salir de la aplicación
+        val preferencias = getSharedPreferences("preferencias", Context.MODE_PRIVATE)
+        val editor = preferencias.edit()
+        editor.remove("usuario_autenticado")
+        editor.apply()
+        super.onDestroy()
     }
 
     private fun usuarioHaIniciadoSesion(): Boolean {
@@ -184,18 +214,41 @@ class MainActivity : ComponentActivity() {
         return preferencias.getBoolean("usuario_autenticado", false)
     }
 
-    private fun iniciarMiActividad() {
+    fun iniciarMiActividad() {
         val intent = Intent(this@MainActivity, MiActividad::class.java)
         startActivity(intent)
         finish() // Termina la actividad actual para que el usuario no pueda volver atrás presionando el botón de retroceso
     }
 
-    private fun mostrarContenidoPrincipal() {
-        setContent {
-            MainActivityContent()
+    // Agregar esta función para iniciar RegisterActivity
+    fun iniciarRegisterActivity() {
+        val intent = Intent(this@MainActivity, RegisterActivity::class.java)
+        startActivity(intent)
+    }
+}
+
+
+
+
+@Composable
+fun FirstContent(activity: MainActivity) { // Recibe una referencia a la actividad actual
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(onClick = { activity.iniciarMiActividad() }) { // Llama a la función de la actividad
+            Text(text = "Login")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { activity.iniciarRegisterActivity() }) { // Llama a la función de la actividad
+            Text(text = "Register")
         }
     }
 }
+
 
     //Función para que el carrito se muestre como ventana emergente con los platillos seleccionados
     @Composable

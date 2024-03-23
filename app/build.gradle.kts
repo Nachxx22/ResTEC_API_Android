@@ -38,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true // Habilitar el enlace de datos
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
