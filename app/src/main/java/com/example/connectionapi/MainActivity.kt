@@ -33,6 +33,10 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import retrofit2.Callback
 import retrofit2.Response
+import android.content.Intent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+
 
 data class Platillo(
     val nombre: String,
@@ -47,6 +51,16 @@ data class Pedido(
     val platillos: List<String>,
     val feedback: String,
     val status: String
+)
+data class Usuario(
+    val cedula: String,
+    val nombre: String,
+    val apellidos: String,
+    val direccion: String,
+    val fechaNacimiento: String,
+    val telefono: String,
+    val correo: String,
+    val contraseña: String
 )
 
 
@@ -74,6 +88,7 @@ fun PlatillosComposable(selectedPlatillos: MutableList<Platillo>, apiMutex: Mute
         // Llamar a CallApi dentro del cuerpo de una función @Composable
         CallApi(call = ApiConfig.apiService.getPlatillos(), selectedPlatillos = selectedPlatillos, mutex = apiMutex)
 }
+
 
 @Composable
 fun MainActivityContent() {
@@ -130,6 +145,7 @@ fun MainActivityContent() {
                 PlatillosComposable(selectedPlatillos = selectedPlatillos, apiMutex = apiMutex)
                 ApiPedidos(call = ApiConfig.apiService.getPedidos(),pedidos2=pedidos, mutex = apiMutex)
 
+
                 // Muestra el diálogo si showDialog es true
                 if (showDialog) {
                     ShowPlatillosInCartDialog(selectedPlatillos)
@@ -151,6 +167,30 @@ fun MainActivityContent() {
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Verificar si el usuario ya ha iniciado sesión
+        if (usuarioHaIniciadoSesion()) {
+            // Si el usuario ya ha iniciado sesión, mostrar el contenido de MainActivity
+            mostrarContenidoPrincipal()
+        } else {
+            // Si el usuario no ha iniciado sesión, iniciar MiActividad para que pueda hacerlo
+            iniciarMiActividad()
+        }
+    }
+
+    private fun usuarioHaIniciadoSesion(): Boolean {
+        // Leer el indicador de inicio de sesión desde SharedPreferences
+        val preferencias = getSharedPreferences("preferencias", Context.MODE_PRIVATE)
+        return preferencias.getBoolean("usuario_autenticado", false)
+    }
+
+    private fun iniciarMiActividad() {
+        val intent = Intent(this@MainActivity, MiActividad::class.java)
+        startActivity(intent)
+        finish() // Termina la actividad actual para que el usuario no pueda volver atrás presionando el botón de retroceso
+    }
+
+    private fun mostrarContenidoPrincipal() {
         setContent {
             MainActivityContent()
         }
